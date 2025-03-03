@@ -234,7 +234,9 @@ std::optional<KeyPress> EngineInput::mapScanCode(const int scanCode) const
 std::string EngineInput::GetCommandStringFromStandardIn()
 {
    std::string commandBuffer;
-   auto& charsRead = std::getline(std::cin, commandBuffer, '\n');
+   // int flags = fcntl(0, F_GETFL, 0);
+   // fcntl(0, F_SETFL, flags | O_NONBLOCK);
+   // auto& charsRead = std::getline(std::cin, commandBuffer, '\n');
    //was_command_entered = bool(charsRead);
    return commandBuffer;
 }

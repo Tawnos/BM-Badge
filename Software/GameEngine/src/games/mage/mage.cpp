@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <chrono>
-#include <format>
 #include <limits>
 #include <thread>
 #include <typeinfo>

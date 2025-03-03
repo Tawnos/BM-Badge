@@ -189,7 +189,7 @@ void MageHexEditor::renderHexHeader()
    const auto u2Value = *(uint16_t*)((currentByteAddress - (hexCursorOffset % 2)));
    sprintf(headerString, 
       "CurrentPage: %03u  CurrentByte: 0x%04X\n"
-      "TotalPages:  %03u  Entities: %05zu  Mem: 0x%04X",
+      "TotalPages:  %03u  Entities: %05u  Mem: 0x%04X",
       currentMemPage, hexCursorOffset, totalMemPages, mapControl->currentMap.value().entityCount, memTotal);
 
    frameBuffer->DrawText(headerString, 0xffff, HEXED_BYTE_OFFSET_X, 0);

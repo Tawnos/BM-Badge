@@ -82,49 +82,48 @@ std::optional<uint16_t> MageDialogControl::Update()
       return std::nullopt;
    }
 
+   if (GameClock::now() < nextUpdateAllowed)
+   {
+      return std::nullopt;
+   }
+   nextUpdateAllowed = GameClock::now() + TimeBetweenSelectionChange;
+
    const auto& currentScreen = currentDialog->GetScreen(currentScreenIndex);
    if (shouldShowResponses(currentScreen))
    {
-      if (GameClock::now() > nextUpdateAllowed)
+      if (inputHandler->PreviousDialogResponse())
       {
-         nextUpdateAllowed = GameClock::now() + TimeBetweenSelectionChange;
-         if (inputHandler->PreviousDialogResponse())
-         {
-            currentResponseIndex++;
-         }
-         if (inputHandler->NextDialogResponse())
-         {
-            currentResponseIndex--;
-         }
-         currentResponseIndex %= currentScreen.responseCount;
+         currentResponseIndex++;
       }
-
-      if (inputHandler->SelectDialogResponse())
+      else if (inputHandler->NextDialogResponse())
       {
-         nextUpdateAllowed = GameClock::now() + TimeBetweenSelectionChange;
+         currentResponseIndex--;
+      }
+      else if (inputHandler->SelectDialogResponse())
+      {
          open = false;
          if (currentResponseIndex < currentScreen.responseCount)
          {
             return currentScreen.GetResponse(currentResponseIndex).scriptId;
          }
       }
-   }
+      currentResponseIndex %= currentScreen.responseCount;
 
-   const auto shouldAdvance = inputHandler->AdvanceDialog() || MAGE_NO_MAP != mapControl->mapLoadId;
-
-   if (shouldAdvance)
-   {
-      currentMessageId++;
-      if (currentMessageId >= currentScreen.messageCount)
+      const auto shouldAdvance = inputHandler->AdvanceDialog() || MAGE_NO_MAP != mapControl->mapLoadId;
+      if (shouldAdvance)
       {
-         loadNextScreen();
+         currentMessageId++;
+         if (currentMessageId >= currentScreen.messageCount)
+         {
+            loadNextScreen();
+         }
+         else
+         {
+            currentMessage = currentScreen.GetMessage(stringLoader, currentMessageId, triggeringEntityName);
+         }
       }
-      else
-      {
-         currentMessage = currentScreen.GetMessage(stringLoader, currentMessageId, triggeringEntityName);
-      }
+      return std::nullopt;
    }
-   return std::nullopt;
 }
 
 void MageDialogControl::Draw() const
@@ -150,7 +149,7 @@ void MageDialogControl::Draw() const
    const auto messageY = (uint16_t)((coords.text.origin.y * tileset->TileHeight) + (tileset->TileHeight / 2));
    drawBackground(EntityRect{ messageX, messageY, coords.text.w, coords.text.h });
    frameBuffer->DrawText(currentMessage, COLOR_WHITE, messageX + tileset->TileWidth + 8, messageY + tileset->TileHeight - 2);
-   
+
    static const auto TAU = 6.28318f;
    const auto bounce = static_cast<int8_t>(cos((static_cast<float>(cursorPhase) / 1000.0f) * TAU) * 3);
    auto arrowX = 0;
@@ -181,7 +180,7 @@ void MageDialogControl::Draw() const
       arrowX = messageX + ((coords.text.w - 2) * tileset->TileWidth);
       arrowY = messageY + ((coords.text.h - 2) * tileset->TileHeight) + bounce;
    }
-   frameBuffer->DrawTileScreenCoords(currentFrameTilesetIndex, DIALOG_TILES_ARROW, arrowX, 3 + arrowY + tileset->TileHeight/4 * currentResponseIndex, RENDER_FLAGS_FLIP_DIAG);
+   frameBuffer->DrawTileScreenCoords(currentFrameTilesetIndex, DIALOG_TILES_ARROW, arrowX, 3 + arrowY + tileset->TileHeight / 4 * currentResponseIndex, RENDER_FLAGS_FLIP_DIAG);
 
    if (currentPortraitId != DIALOG_SCREEN_NO_PORTRAIT)
    {

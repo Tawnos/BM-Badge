@@ -131,7 +131,7 @@ struct EngineROM
       }
    }
 
-   ~EngineROM() noexcept = default;
+   ~EngineROM() noexcept = delete;
 
    bool Magic() const
    {

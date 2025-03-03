@@ -46,7 +46,7 @@
     {
       "name": "gcc",
       "hidden": true,
-      "binaryDir": "${sourceDir}/build/",
+      "binaryDir": "${sourceDir}/build_linux/",
       "toolchainFile": "${sourceDir}/cmake/toolchain-gcc_x86.cmake",
       "generator": "Unix Makefiles",
       "cacheVariables": {
