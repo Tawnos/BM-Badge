@@ -26,6 +26,26 @@
             "preLaunchTask": "${defaultBuildTask}"
         },
         {
+            "name": "Debug (WSL)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build_linux/bm_badge",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build_linux/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "${defaultBuildTask}"
+        },
+        {
             "name": "Debug Launch (Physical Badge)",
             "type": "cortex-debug",
             "request": "launch",
